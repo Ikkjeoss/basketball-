@@ -1,0 +1,247 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial;
+    background-color: #C4F2F2;
+}
+
+.raleway-heading {
+  font-family: "Raleway", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.navbar {
+    background-color: #B0ABD3;
+    overflow: hidden;
+    display: flex;
+    font-size: large;
+    flex-wrap: wrap;
+    overflow: visible;
+}
+
+.navbar a {
+    float: none;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.navbar a:hover {
+    background-color: #cc9cb2;
+    color: black;
+}
+
+.nav-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.nav-list li {
+    margin-right: 20px;
+}
+
+header {
+    padding: 20px;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+    padding: 5px;
+}
+
+.grupp {
+    width: 45%;
+}
+
+.tabeller-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.tabeller {
+    border: 5px solid #F2BCd5;
+    border-radius: 10px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabeller th, .tabeller td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.tabeller th {
+    background-color: #B0ABD3;
+    color: #f2f2f2;
+}
+
+.tabeller tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#login {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid red;
+    padding: 10px;
+    text-align: center;
+}
+
+#login h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.login-field {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.login-field label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+#admintext {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#enterBtn {
+    background-color: #B0ABD3;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+}
+
+#enterBtn:hover {
+    background-color: #cc9cb2;
+}
+
+#grupper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+    padding: 5px;
+}
+
+.gruppe {
+    width: 45%;
+    background-color: #f2f2f2;
+    border: 5px solid #F2BCd5;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.gruppe h3 {
+    background-color: #B0ABD3;
+    color: #f2f2f2;
+    margin: -10px -10px 10px -10px;
+    padding: 8px;
+    border-radius: 5px 5px 0 0;
+}
+
+.gruppe ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.gruppe ul li {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.gruppe ul li:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.gruppe ul li:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+    .grupp {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .container {
+        padding: 10px;
+        flex-direction: column;
+    }
+
+    .navbar {
+        flex-wrap: wrap;
+    }
+
+    .nav-list {
+        flex-wrap: wrap;
+    }
+
+    #login {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        width: 90%;
+        max-width: 360px;
+        margin: 40px auto;
+        box-sizing: border-box;
+    }
+
+    #admintext {
+        max-width: 100%;
+    }
+    .gruppe {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar a {
+        padding: 10px 12px;
+        font-size: medium;
+    }
+
+    .tabeller th,
+    .tabeller td {
+        padding: 6px;
+        font-size: 13px;
+    }
+
+    header {
+        padding: 12px;
+    }
+}
