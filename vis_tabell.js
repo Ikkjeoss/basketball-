@@ -71,37 +71,39 @@ function render(stats) {
 
         html += `
         <div class="grupp">
-            <table class="tabeller">
-                <thead>
-                    <tr><th colspan="9">Gruppe ${gruppe}</th></tr>
-                    <tr>
-                        <th>Lag</th>
-                        <th>Kamper</th>
-                        <th>Vunnet</th>
-                        <th>Uavgjort</th>
-                        <th>Tapt</th>
-                        <th>Mål</th>
-                        <th>Innslupne</th>
-                        <th>Diff</th>
-                        <th>Poeng</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${gruppeLag.map(lag => `
+            <div class="kampoppsett-wrapper">
+                <table class="tabeller">
+                    <thead>
+                        <tr><th colspan="9">Gruppe ${gruppe}</th></tr>
                         <tr>
-                            <td>${lag.navn}</td>
-                            <td>${lag.kamper}</td>
-                            <td>${lag.vunnet}</td>
-                            <td>${lag.uavgjort}</td>
-                            <td>${lag.tap}</td>
-                            <td>${lag.mol}</td>
-                            <td>${lag.innslupne}</td>
-                            <td>${lag.diff}</td>
-                            <td>${lag.poeng}</td>
+                            <th>Lag</th>
+                            <th>Kamper</th>
+                            <th>Vunnet</th>
+                            <th>Uavgjort</th>
+                            <th>Tapt</th>
+                            <th>Mål</th>
+                            <th>Innslupne</th>
+                            <th>Diff</th>
+                            <th>Poeng</th>
                         </tr>
-                    `).join("")}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        ${gruppeLag.map(lag => `
+                            <tr>
+                                <td>${lag.navn}</td>
+                                <td>${lag.kamper}</td>
+                                <td>${lag.vunnet}</td>
+                                <td>${lag.uavgjort}</td>
+                                <td>${lag.tap}</td>
+                                <td>${lag.mol}</td>
+                                <td>${lag.innslupne}</td>
+                                <td>${lag.diff}</td>
+                                <td>${lag.poeng}</td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            </div>
         </div>
         `;
     });
