@@ -352,6 +352,25 @@ main > button:hover {
     justify-content: space-around;
     gap: 20px;
     padding: 5px;
+#input input[type="text"] {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 15px;
+}
+ 
+#input button {
+    background-color: #B0ABD3;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+ 
+#input button:hover {
+    background-color: #cc9cb2;
 }
 
 @media (max-width: 768px) {
