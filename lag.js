@@ -422,7 +422,7 @@ function gjenopprettSemifinaler() {
         <input type="number" placeholder="0" id="semi1_h"${vinner1 ? " disabled" : ""}>
         <input type="number" placeholder="0" id="semi1_b"${vinner1 ? " disabled" : ""}>
         <button onclick="registrerSemi(1)"${vinner1 ? " disabled" : ""}>Ferdig</button>
-        <p class="merknad">⚠️ Uavgjort avgjøres med best av 3 straffekast</p>
+        <p class="merknad"> Uavgjort avgjøres med best av 3 straffekast</p>
         ${vinner1 ? `<p><strong>Vinner: ${vinner1}</strong></p>` : ""}
     `;
 
@@ -432,7 +432,7 @@ function gjenopprettSemifinaler() {
         <input type="number" placeholder="0" id="semi2_h"${vinner2 ? " disabled" : ""}>
         <input type="number" placeholder="0" id="semi2_b"${vinner2 ? " disabled" : ""}>
         <button onclick="registrerSemi(2)"${vinner2 ? " disabled" : ""}>Ferdig</button>
-        <p class="merknad">⚠️ Uavgjort avgjøres med best av 3 straffekast</p>
+        <p class="merknad"> Uavgjort avgjøres med best av 3 straffekast</p>
         ${vinner2 ? `<p><strong>Vinner: ${vinner2}</strong></p>` : ""}
     `;
 
@@ -484,8 +484,8 @@ function sjekkOgVisFinale() {
         <input type="number" placeholder="0" id="finale_h"${finaleVinner ? " disabled" : ""}>
         <input type="number" placeholder="0" id="finale_b"${finaleVinner ? " disabled" : ""}>
         <button onclick="registrerFinale()"${finaleVinner ? " disabled" : ""}>Ferdig</button>
-        <p class="merknad">⚠️ Uavgjort avgjøres med best av 3 straffekast</p>
-        ${finaleVinner ? `<p><strong>🏆 Turneringsvinner: ${finaleVinner}!</strong></p>` : ""}
+        <p class="merknad"> Uavgjort avgjøres med best av 3 straffekast</p>
+        ${finaleVinner ? `<p><strong> Turneringsvinner: ${finaleVinner}!</strong></p>` : ""}
     `;
 }
 
