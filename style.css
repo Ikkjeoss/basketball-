@@ -3,22 +3,23 @@ html, body {
     padding: 0;
     font-family: Arial;
     background-color: #C4F2F2;
+    overflow-x: hidden;
 }
 
 .raleway-heading {
-  font-family: "Raleway", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
+    font-family: "Raleway", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
 }
 
 .navbar {
     background-color: #B0ABD3;
-    overflow: hidden;
     display: flex;
     font-size: large;
     flex-wrap: wrap;
-    overflow: visible;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .navbar a {
@@ -40,6 +41,7 @@ html, body {
     margin: 0;
     padding: 0;
     display: flex;
+    flex-wrap: wrap;
 }
 
 .nav-list li {
@@ -51,17 +53,32 @@ header {
     text-align: center;
 }
 
-.container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+main {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* ── Standings grid ──────────────────────────────────────── */
+
+.container,
+#container {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
-    padding: 5px;
+    padding: 20px;
+    width: 100%;
 }
 
 .grupp {
-    width: 45%;
+    width: 100%;
+    min-width: 0;
 }
+
+/* ── Tables ──────────────────────────────────────────────── */
 
 .tabeller-wrapper {
     width: 100%;
@@ -73,13 +90,17 @@ header {
     border: 5px solid #F2BCd5;
     border-radius: 10px;
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
 }
 
-.tabeller th, .tabeller td {
+.tabeller th,
+.tabeller td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
+    font-size: 14px;
 }
 
 .tabeller th {
@@ -90,6 +111,56 @@ header {
 .tabeller tr:nth-child(even) {
     background-color: #f2f2f2;
 }
+
+/* ── Admin: team groups ──────────────────────────────────── */
+
+#grupper {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+}
+
+.gruppe {
+    width: 100%;
+    min-width: 0;
+    background-color: #f2f2f2;
+    border: 5px solid #F2BCd5;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.gruppe h3 {
+    background-color: #B0ABD3;
+    color: #f2f2f2;
+    margin: -10px -10px 10px -10px;
+    padding: 8px;
+    border-radius: 5px 5px 0 0;
+}
+
+.gruppe ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.gruppe ul li {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.gruppe ul li:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.gruppe ul li:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+/* ── Login ───────────────────────────────────────────────── */
 
 #login {
     position: absolute;
@@ -119,7 +190,6 @@ header {
 #admintext {
     width: 100%;
     padding: 8px;
-    box-sizing: border-box;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
@@ -139,23 +209,56 @@ header {
     background-color: #cc9cb2;
 }
 
-#grupper {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    gap: 20px;
-    padding: 5px;
+/* ── Admin input bar ─────────────────────────────────────── */
+
+#input {
+    padding: 10px 20px;
 }
 
-.gruppe {
-    width: 45%;
+#input input[type="text"] {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 15px;
+}
+
+#input button {
+    background-color: #B0ABD3;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#input button:hover {
+    background-color: #cc9cb2;
+}
+
+/* ── Knockout ────────────────────────────────────────────── */
+
+.knockout-wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+}
+
+#semi-finale1,
+#semi-finale2,
+#finale {
+    width: 100%;
     background-color: #f2f2f2;
     border: 5px solid #F2BCd5;
     border-radius: 10px;
     padding: 10px;
 }
 
-.gruppe h3 {
+#semi-finale1 h3,
+#semi-finale2 h3,
+#finale h3 {
     background-color: #B0ABD3;
     color: #f2f2f2;
     margin: -10px -10px 10px -10px;
@@ -163,51 +266,101 @@ header {
     border-radius: 5px 5px 0 0;
 }
 
-.gruppe ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
+#semi-finale1 p,
+#semi-finale2 p,
+#finale p {
+    font-size: 15px;
+    font-weight: bold;
+    margin: 6px 0 10px;
+    color: #333;
 }
 
-.gruppe ul li {
+#semi-finale1 input[type="number"],
+#semi-finale2 input[type="number"],
+#finale input[type="number"] {
+    width: 60px;
+    padding: 6px;
     border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
+    border-radius: 4px;
+    font-size: 15px;
+    text-align: center;
+    background-color: #fff;
+    margin-right: 4px;
 }
 
-.gruppe ul li:nth-child(even) {
-    background-color: #f2f2f2;
+#semi-finale1 button,
+#semi-finale2 button,
+#finale button {
+    background-color: #B0ABD3;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 4px;
 }
 
-.gruppe ul li:nth-child(odd) {
-    background-color: #ffffff;
+#semi-finale1 button:hover:not(:disabled),
+#semi-finale2 button:hover:not(:disabled),
+#finale button:hover:not(:disabled) {
+    background-color: #cc9cb2;
 }
 
-* {
-    box-sizing: border-box;
+#semi-finale1 button:disabled,
+#semi-finale2 button:disabled,
+#finale button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
 }
 
-body {
-    overflow-x: hidden;
+#semi-finale1 p strong,
+#semi-finale2 p strong,
+#finale p strong {
+    color: #5a7a3a;
 }
 
-@media (max-width: 768px) {
-    .grupp {
-        width: 100%;
-        min-width: 0;
-    }
+main > button {
+    display: block;
+    margin: 12px auto;
+    background-color: #B0ABD3;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
 
-    .container {
+main > button:hover {
+    background-color: #cc9cb2;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+    .container,
+    #container,
+    #grupper,
+    .knockout-wrapper {
+        grid-template-columns: 1fr;
         padding: 10px;
-        flex-direction: column;
+        gap: 12px;
     }
 
-    .navbar {
-        flex-wrap: wrap;
+    .navbar a {
+        padding: 10px 12px;
+        font-size: medium;
     }
 
-    .nav-list {
-        flex-wrap: wrap;
+    .tabeller th,
+    .tabeller td {
+        padding: 5px;
+        font-size: 11px;
+    }
+
+    header {
+        padding: 12px;
     }
 
     #login {
@@ -218,30 +371,19 @@ body {
         width: 90%;
         max-width: 360px;
         margin: 40px auto;
-        box-sizing: border-box;
-    }
-
-    #admintext {
-        max-width: 100%;
-    }
-    .gruppe {
-        width: 100%;
     }
 }
 
-@media (max-width: 480px) {
-    .navbar a {
-        padding: 10px 12px;
-        font-size: medium;
-    }
+/* ── Match schedule table (admin) ────────────────────────── */
 
-    .tabeller th,
-    .tabeller td {
-        padding: 6px;
-        font-size: 13px;
-    }
+.kampoppsett-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 10px 10px;
+    box-sizing: border-box;
+}
 
-    header {
-        padding: 12px;
-    }
+.kampoppsett-wrapper .tabeller {
+    min-width: 520px; /* keeps columns readable, enables scroll on small screens */
 }
