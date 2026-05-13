@@ -21,7 +21,6 @@ function sjekk() {
     visKamper();
     oppdater();
 
-    // Restore semifinal/finale state if it was saved
     const semi1 = localStorage.getItem("semi1");
     const semi2 = localStorage.getItem("semi2");
     if (semi1 && semi2) {
@@ -36,7 +35,7 @@ function leggTil() {
     if (!navn) return;
 
     if (lagData.some(lag => lag.navn === navn)) {
-        alert("laget finnes allerede");
+        alert("Laget finnes allerede");
         return;
     }
 
@@ -45,8 +44,6 @@ function leggTil() {
 
     lagData.push({ navn, gruppe: grupper[groupIndex] });
     localStorage.lagData = JSON.stringify(lagData);
-
-    // Rebuild kamper list from scratch when teams change
     localStorage.kamper = JSON.stringify(byggKamper(lagData));
 
     lagEl.value = "";
@@ -63,7 +60,6 @@ function fjernLag(navn) {
     visKamper();
 }
 
-// Builds the full match schedule from lagData, preserving any already-saved scores
 function byggKamper(lagData) {
     const eksisterendeKamper = JSON.parse(localStorage.kamper || "[]");
     const grupper = ["A", "B", "C", "D"];
@@ -107,7 +103,6 @@ function byggKamper(lagData) {
                 const minutter = total % 60;
                 const tid = `${String(timer).padStart(2, "0")}:${String(minutter).padStart(2, "0")}`;
 
-                // Preserve existing score if this match was already played
                 const gammel = eksisterendeKamper.find(
                     k => k.hjemme === kamp.hjemme && k.borte === kamp.borte
                 );
@@ -119,7 +114,8 @@ function byggKamper(lagData) {
                     hjemme: kamp.hjemme,
                     borte: kamp.borte,
                     hjemmeScore: gammel ? gammel.hjemmeScore : "",
-                    borteScore: gammel ? gammel.borteScore : ""
+                    borteScore: gammel ? gammel.borteScore : "",
+                    walkover: gammel ? gammel.walkover : false
                 });
 
                 kampNr++;
@@ -149,10 +145,41 @@ function visKamper() {
                 <td>${kamp.borte}</td>
                 <td><input type="number" placeholder="0" id="result${idx}_h" value="${hVal}"${ferdig ? " disabled" : ""}></td>
                 <td><input type="number" placeholder="0" id="result${idx}_b" value="${bVal}"${ferdig ? " disabled" : ""}></td>
-                <td><button onclick="registrerResultat(${idx})"${ferdig ? " disabled" : ""}>Ferdig</button></td>
+                <td>
+                    <button onclick="registrerResultat(${idx})"${ferdig ? " disabled" : ""}>Ferdig</button>
+                    <button onclick="walkover(${idx}, 'hjemme')"${ferdig ? " disabled" : ""} title="Walkover – bortelag møtte ikke opp">WO H</button>
+                    <button onclick="walkover(${idx}, 'borte')"${ferdig ? " disabled" : ""} title="Walkover – hjemmelag møtte ikke opp">WO B</button>
+                </td>
             </tr>
         `;
     });
+}
+
+/**
+ * Registers a walkover. The team that FAILED TO SHOW UP loses 0–8.
+ * tapende = "hjemme" means hjemmelaget møtte ikke opp → borte vinner 8–0.
+ * tapende = "borte"  means bortelaget møtte ikke opp  → hjemme vinner 8–0.
+ */
+function walkover(idx, tapende) {
+    let kamper = JSON.parse(localStorage.kamper || "[]");
+    const kamp = kamper[idx];
+
+    if (!confirm(`Bekreft walkover: ${tapende === "hjemme" ? kamp.hjemme : kamp.borte} møtte ikke opp. Resultatet settes til 0–8.`)) return;
+
+    if (tapende === "hjemme") {
+        // Bortelag vinner
+        kamp.hjemmeScore = 0;
+        kamp.borteScore = 8;
+    } else {
+        // Hjemmelag vinner
+        kamp.hjemmeScore = 8;
+        kamp.borteScore = 0;
+    }
+
+    kamp.walkover = true;
+    localStorage.kamper = JSON.stringify(kamper);
+    visKamper();
+    oppdater();
 }
 
 function registrerResultat(idx) {
@@ -169,9 +196,9 @@ function registrerResultat(idx) {
 
     kamp.hjemmeScore = hjemmeScore;
     kamp.borteScore = borteScore;
+    kamp.walkover = false;
 
     localStorage.kamper = JSON.stringify(kamper);
-
     visKamper();
     oppdater();
 }
@@ -201,8 +228,7 @@ function visLag() {
 }
 
 function oppdater() {
-    // vis_tabell.js reads from localStorage.kamper — nothing extra needed here.
-    // Call this after any score change so index.html stays in sync automatically.
+    // Standings display (vis_tabell.js) reads from localStorage.kamper directly.
 }
 
 function reset() {
@@ -225,6 +251,125 @@ function reset() {
     document.getElementById("finale").innerHTML = "";
 }
 
+// --- STANDINGS HELPERS ---
+
+/**
+ * Builds a stats object for all teams in a group.
+ * Scoring: 2pts win, 1pt draw, 0pts loss (basketball rules).
+ */
+function byggStatistikk(gruppe) {
+    let lagData = JSON.parse(localStorage.lagData);
+    let kamper = JSON.parse(localStorage.kamper || "[]");
+
+    let stats = lagData
+        .filter(l => l.gruppe === gruppe)
+        .map(l => ({ navn: l.navn, poeng: 0, mol: 0, innslupne: 0, diff: 0, kamper: 0 }));
+
+    kamper.filter(k => k.gruppe === gruppe).forEach(kamp => {
+        if (kamp.hjemmeScore === "" || kamp.borteScore === "") return;
+        let h = stats.find(l => l.navn === kamp.hjemme);
+        let b = stats.find(l => l.navn === kamp.borte);
+        if (!h || !b) return;
+
+        h.mol += Number(kamp.hjemmeScore);
+        b.mol += Number(kamp.borteScore);
+        h.innslupne += Number(kamp.borteScore);
+        b.innslupne += Number(kamp.hjemmeScore);
+        h.diff = h.mol - h.innslupne;
+        b.diff = b.mol - b.innslupne;
+        h.kamper++;
+        b.kamper++;
+
+        // Basketball: 2pts for win, 1pt each for draw
+        if (Number(kamp.hjemmeScore) > Number(kamp.borteScore)) {
+            h.poeng += 2;
+        } else if (Number(kamp.borteScore) > Number(kamp.hjemmeScore)) {
+            b.poeng += 2;
+        } else {
+            h.poeng += 1;
+            b.poeng += 1;
+        }
+    });
+
+    return stats;
+}
+
+/**
+ * Head-to-head points between a subset of tied teams.
+ * Returns a map: { lagNavn: poeng }
+ */
+function innbyrdesPoeng(lagNavn, gruppe) {
+    let kamper = JSON.parse(localStorage.kamper || "[]");
+    let poengMap = {};
+    lagNavn.forEach(n => poengMap[n] = 0);
+
+    kamper
+        .filter(k => k.gruppe === gruppe &&
+            lagNavn.includes(k.hjemme) &&
+            lagNavn.includes(k.borte) &&
+            k.hjemmeScore !== "" && k.borteScore !== "")
+        .forEach(kamp => {
+            if (Number(kamp.hjemmeScore) > Number(kamp.borteScore)) {
+                poengMap[kamp.hjemme] += 2;
+            } else if (Number(kamp.borteScore) > Number(kamp.hjemmeScore)) {
+                poengMap[kamp.borte] += 2;
+            } else {
+                poengMap[kamp.hjemme] += 1;
+                poengMap[kamp.borte] += 1;
+            }
+        });
+
+    return poengMap;
+}
+
+/**
+ * Sorts teams using basketball tiebreaker rules:
+ * 1. Points
+ * 2. Head-to-head result among tied teams
+ * 3. Goal difference
+ * 4. Most goals scored
+ * 5. Coin toss (random, as a last resort)
+ */
+function sorterTabell(stats, gruppe) {
+    // First pass: sort by total points
+    stats.sort((a, b) => b.poeng - a.poeng);
+
+    // Find groups of teams with equal points and apply tiebreakers
+    let i = 0;
+    while (i < stats.length) {
+        let j = i + 1;
+        while (j < stats.length && stats[j].poeng === stats[i].poeng) j++;
+
+        if (j - i > 1) {
+            // There's a tie between stats[i..j-1]
+            let tiedNames = stats.slice(i, j).map(l => l.navn);
+            let h2h = innbyrdesPoeng(tiedNames, gruppe);
+
+            stats.slice(i, j).sort((a, b) => {
+                // 1. Head-to-head
+                if (h2h[b.navn] !== h2h[a.navn]) return h2h[b.navn] - h2h[a.navn];
+                // 2. Goal difference
+                if (b.diff !== a.diff) return b.diff - a.diff;
+                // 3. Goals scored
+                if (b.mol !== a.mol) return b.mol - a.mol;
+                // 4. Coin toss
+                return Math.random() - 0.5;
+            }).forEach((lag, idx) => {
+                stats[i + idx] = lag;
+            });
+        }
+
+        i = j;
+    }
+
+    return stats;
+}
+
+function topLagIGruppe(gruppe) {
+    const stats = sorterTabell(byggStatistikk(gruppe), gruppe);
+    return stats[0];
+}
+
 // --- KNOCKOUT ---
 
 function tidFraKampNr(kampNr) {
@@ -239,42 +384,6 @@ function alleGruppekamperFerdige() {
     const kamper = JSON.parse(localStorage.kamper || "[]");
     if (kamper.length === 0) return false;
     return kamper.every(k => k.hjemmeScore !== "" && k.borteScore !== "");
-}
-
-function topLagIGruppe(gruppe) {
-    // Compute standings from kamper, same logic as vis_tabell.js
-    let lagData = JSON.parse(localStorage.lagData);
-    let kamper = JSON.parse(localStorage.kamper || "[]");
-
-    let stats = lagData
-        .filter(l => l.gruppe === gruppe)
-        .map(l => ({ navn: l.navn, poeng: 0, mol: 0, diff: 0, innslupne: 0 }));
-
-    kamper.filter(k => k.gruppe === gruppe).forEach(kamp => {
-        if (kamp.hjemmeScore === "" || kamp.borteScore === "") return;
-        let h = stats.find(l => l.navn === kamp.hjemme);
-        let b = stats.find(l => l.navn === kamp.borte);
-        if (!h || !b) return;
-
-        h.mol += Number(kamp.hjemmeScore);
-        b.mol += Number(kamp.borteScore);
-        h.innslupne += Number(kamp.borteScore);
-        b.innslupne += Number(kamp.hjemmeScore);
-        h.diff = h.mol - h.innslupne;
-        b.diff = b.mol - b.innslupne;
-
-        if (kamp.hjemmeScore > kamp.borteScore) {
-            h.poeng += 3;
-        } else if (kamp.borteScore > kamp.hjemmeScore) {
-            b.poeng += 3;
-        } else {
-            h.poeng++;
-            b.poeng++;
-        }
-    });
-
-    stats.sort((a, b) => b.poeng - a.poeng || b.diff - a.diff || b.mol - a.mol);
-    return stats[0];
 }
 
 function visSemifinaler() {
@@ -313,6 +422,7 @@ function gjenopprettSemifinaler() {
         <input type="number" placeholder="0" id="semi1_h"${vinner1 ? " disabled" : ""}>
         <input type="number" placeholder="0" id="semi1_b"${vinner1 ? " disabled" : ""}>
         <button onclick="registrerSemi(1)"${vinner1 ? " disabled" : ""}>Ferdig</button>
+        <p class="merknad">⚠️ Uavgjort avgjøres med best av 3 straffekast</p>
         ${vinner1 ? `<p><strong>Vinner: ${vinner1}</strong></p>` : ""}
     `;
 
@@ -322,6 +432,7 @@ function gjenopprettSemifinaler() {
         <input type="number" placeholder="0" id="semi2_h"${vinner2 ? " disabled" : ""}>
         <input type="number" placeholder="0" id="semi2_b"${vinner2 ? " disabled" : ""}>
         <button onclick="registrerSemi(2)"${vinner2 ? " disabled" : ""}>Ferdig</button>
+        <p class="merknad">⚠️ Uavgjort avgjøres med best av 3 straffekast</p>
         ${vinner2 ? `<p><strong>Vinner: ${vinner2}</strong></p>` : ""}
     `;
 
@@ -339,15 +450,18 @@ function registrerSemi(semiNr) {
         return;
     }
 
+    const semi = JSON.parse(localStorage.getItem(`semi${semiNr}`));
+    let vinner;
+
     if (hjemmeScore === borteScore) {
-        alert("Semifinaler kan ikke ende uavgjort — endre resultatet");
-        return;
+        // Penalty shootout — ask user who won
+        const valg = confirm(`Uavgjort! Etter straffekast:\nTrykk OK hvis ${semi.hjemme} vant, Avbryt hvis ${semi.borte} vant.`);
+        vinner = valg ? semi.hjemme : semi.borte;
+    } else {
+        vinner = hjemmeScore > borteScore ? semi.hjemme : semi.borte;
     }
 
-    const semi = JSON.parse(localStorage.getItem(`semi${semiNr}`));
-    const vinner = hjemmeScore > borteScore ? semi.hjemme : semi.borte;
     localStorage.setItem(`semi${semiNr}Vinner`, vinner);
-
     gjenopprettSemifinaler();
     sjekkOgVisFinale();
 }
@@ -370,6 +484,7 @@ function sjekkOgVisFinale() {
         <input type="number" placeholder="0" id="finale_h"${finaleVinner ? " disabled" : ""}>
         <input type="number" placeholder="0" id="finale_b"${finaleVinner ? " disabled" : ""}>
         <button onclick="registrerFinale()"${finaleVinner ? " disabled" : ""}>Ferdig</button>
+        <p class="merknad">⚠️ Uavgjort avgjøres med best av 3 straffekast</p>
         ${finaleVinner ? `<p><strong>🏆 Turneringsvinner: ${finaleVinner}!</strong></p>` : ""}
     `;
 }
@@ -383,14 +498,17 @@ function registrerFinale() {
         return;
     }
 
-    if (hjemmeScore === borteScore) {
-        alert("Finalen kan ikke ende uavgjort — endre resultatet");
-        return;
-    }
-
     const vinner1 = localStorage.getItem("semi1Vinner");
     const vinner2 = localStorage.getItem("semi2Vinner");
-    const vinner = hjemmeScore > borteScore ? vinner1 : vinner2;
+    let vinner;
+
+    if (hjemmeScore === borteScore) {
+        // Penalty shootout
+        const valg = confirm(`Uavgjort! Etter straffekast:\nTrykk OK hvis ${vinner1} vant, Avbryt hvis ${vinner2} vant.`);
+        vinner = valg ? vinner1 : vinner2;
+    } else {
+        vinner = hjemmeScore > borteScore ? vinner1 : vinner2;
+    }
 
     localStorage.setItem("finaleVinner", vinner);
     sjekkOgVisFinale();
