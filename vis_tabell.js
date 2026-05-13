@@ -147,4 +147,8 @@ function render(stats) {
     if (!el) return;
 
     el.innerHTML = html;
+    el.innerHTML = html;
+    setInterval(() => {
+    location.reload();
+    }, 3000);
 }
