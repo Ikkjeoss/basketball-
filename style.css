@@ -14,11 +14,11 @@ html, body {
 
 .navbar {
     background-color: #B0ABD3;
-    overflow: hidden;
     display: flex;
     font-size: large;
     flex-wrap: wrap;
     overflow: visible;
+    width: 100%;
 }
 
 .navbar a {
@@ -46,21 +46,28 @@ html, body {
     margin-right: 20px;
 }
 
-header {
-    padding: 20px;
-    text-align: center;
+main {
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.container {
-    display: grid;
+.container,
+#container {
+    display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
-    gap: 20px;
-    padding: 5px;
+    justify-content: center;
+    gap: 40px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .grupp {
-    width: 45%;
+    flex: 0 1 calc(50% - 20px);
+    min-width: 280px;
+    box-sizing: border-box;
 }
 
 .tabeller-wrapper {
@@ -73,7 +80,10 @@ header {
     border: 5px solid #F2BCd5;
     border-radius: 10px;
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 0 auto;
+    overflow: hidden;
 }
 
 .tabeller th, .tabeller td {
@@ -142,9 +152,11 @@ header {
 #grupper {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: center;
     gap: 20px;
-    padding: 5px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .gruppe {
@@ -174,7 +186,6 @@ header {
     justify-content: space-between;
     border: 1px solid #ddd;
     padding: 8px;
-
 }
 
 .gruppe ul li:nth-child(even) {
@@ -195,13 +206,19 @@ body {
 
 @media (max-width: 768px) {
     .grupp {
-        width: 100%;
+        flex: 0 1 100%;
         min-width: 0;
+        width: 100%;
     }
 
-    .container {
+    .container,
+    #container {
         padding: 10px;
         flex-direction: column;
+        align-items: stretch;
+        max-width: 100%;
+        width: 100%;
+        margin: 0;
     }
 
     .navbar {
@@ -226,6 +243,7 @@ body {
     #admintext {
         max-width: 100%;
     }
+
     .gruppe {
         width: 100%;
     }
@@ -247,6 +265,7 @@ body {
         padding: 12px;
     }
 }
+
 /* ── Knockout (semifinale / finale) ─────────────────────── */
 
 #semi-finale1,
@@ -270,7 +289,6 @@ body {
     border-radius: 5px 5px 0 0;
 }
 
-/* kamprad: lagnavnene */
 #semi-finale1 p,
 #semi-finale2 p,
 #finale p {
@@ -280,7 +298,6 @@ body {
     color: #333;
 }
 
-/* score-inputs */
 #semi-finale1 input[type="number"],
 #semi-finale2 input[type="number"],
 #finale input[type="number"] {
@@ -294,7 +311,6 @@ body {
     margin-right: 4px;
 }
 
-/* Ferdig-knappen */
 #semi-finale1 button,
 #semi-finale2 button,
 #finale button {
@@ -321,14 +337,12 @@ body {
     cursor: not-allowed;
 }
 
-/* vinnertekst */
 #semi-finale1 p strong,
 #semi-finale2 p strong,
 #finale p strong {
     color: #5a7a3a;
 }
 
-/* "Vis semifinaler"-knappen */
 main > button {
     display: block;
     margin: 12px auto;
@@ -345,13 +359,17 @@ main > button:hover {
     background-color: #cc9cb2;
 }
 
-/* wrapper for å sentrere kortene ved siden av hverandre */
 .knockout-wrapper {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: center;
     gap: 20px;
-    padding: 5px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
 #input input[type="text"] {
     padding: 6px 10px;
     border: 1px solid #ddd;
